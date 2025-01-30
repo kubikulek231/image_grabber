@@ -3,10 +3,54 @@
     <head>
         <title>Image Grabber</title>
         <link rel="stylesheet" type="text/css" href="popup.css"/>
+        <script defer src="popup.js"></script>
     </head>
     <body>
         <h1>Image Grabber</h1>
         <button id="grabBtn">GRAB NOW</button>
-        <script src="popup.js"></script>
+        <div id="advancedSettingsHeader">Advanced Settings</div>
+        <div id="advancedSettingsContainer">
+        
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="enable_minImageSizeKb">
+                    Enable minimal image size
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="minImageSizeKb" name="minImageSizeKb" min="0" step="1" placeholder="Enter size" disabled>
+                    <span class="unit">kB</span>
+                </div>
+            </div>
+        
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="enable_minImageWidthPx">
+                    Enable minimal image width
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="minImageWidthPx" name="minImageWidthPx" min="0" step="1" placeholder="Enter width" disabled>
+                    <span class="unit">px</span>
+                </div>
+            </div>
+        
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="enable_minImageHeightPx">
+                    Enable minimal image height
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="minImageHeightPx" name="minImageHeightPx" min="0" step="1" placeholder="Enter height" disabled>
+                    <span class="unit">px</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="enable_imageDetails">
+                    Enable image details
+                </label>
+            </div>
+        </div>
+        
     </body>
 </html>

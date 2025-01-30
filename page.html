@@ -7,13 +7,26 @@
     <body>
         <div class="header">
             <div>
+                <div id="sortLabel">Sort by:</div>
+                <button id="sortHeight">Height</button>  
+                <button id="sortWidth">Width</button>  
+                <button id="sortSize">Size</button>  
+            </div>
+            <div>
                 <input type="checkbox" id="selectAll"/>&nbsp;
                 <span>Select all</span>
             </div>
-            <span>Image Grabber</span>
+            <span>Image Grabber 2</span>
             <button id="downloadBtn">Download</button>    
         </div>
         <div class="container">      
+            <div id="imagesError" style="display: none">
+                <div>No images with the desired minimal parameters found on the website!</div>
+            </div>
+            <div id="imagesLoading" style="display: none">
+                <div>Loading image information</div>
+                <div class="loader"></div>
+            </div>
         </div>
         <script src="/lib/jszip.min.js"></script>
         <script src="/page.js"></script>        

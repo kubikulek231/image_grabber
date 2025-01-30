@@ -1,15 +1,16 @@
+let enableImageDetails = false;
 const grabBtn = document.getElementById("grabBtn");
-grabBtn.addEventListener("click",() => {
+grabBtn.addEventListener("click", () => {
     // Get active browser tab
-    chrome.tabs.query({active: true}, function(tabs) {
+    chrome.tabs.query({ active: true }, function (tabs) {
         var tab = tabs[0];
         if (tab) {
             execScript(tab);
         } else {
-            alert("There are no active tabs")
+            alert("There are no active tabs");
         }
-    })
-})
+    });
+});
 
 /**
  * Execute a grabImages() function on a web page,
@@ -19,13 +20,27 @@ grabBtn.addEventListener("click",() => {
 function execScript(tab) {
     // Execute a function on a page of the current browser tab
     // and process the result of execution
+    const enableMinSize = localStorage.getItem("enable_minImageSizeKb") === "true";
+    const enableMinWidth = localStorage.getItem("enable_minImageWidthPx") === "true";
+    const enableMinHeight = localStorage.getItem("enable_minImageHeightPx") === "true";
+    enableImageDetails = localStorage.getItem("enable_imageDetails") === "true";
+
+    // Retrieve the stored values, default to 0 if the setting is disabled (unchecked)
+    const minSizeKb = enableMinSize ? parseFloat(localStorage.getItem("minImageSizeKb")) : 0;
+    const minWidth = enableMinWidth ? parseInt(localStorage.getItem("minImageWidthPx")) : 0;
+    const minHeight = enableMinHeight ? parseInt(localStorage.getItem("minImageHeightPx")) : 0;
+
+    console.log("minImageSizeKb", minSizeKb);
+    console.log("minImageWidthPx", minWidth);
+    console.log("minImageHeightPx", minHeight);
     chrome.scripting.executeScript(
         {
-            target:{tabId: tab.id, allFrames: true},
-            func:grabImages
+            target: { tabId: tab.id, allFrames: true },
+            func: grabImages,
+            args: [minSizeKb, minWidth, minHeight]  // Pass the values to the function
         },
         onResult
-    )
+    );
 }
 
 /**
@@ -34,9 +49,36 @@ function execScript(tab) {
  *
  *  @return Array of image URLs
  */
-function grabImages() {
+function grabImages(minSizeKb, minWidth, minHeight) {
     const images = document.querySelectorAll("img");
-    return Array.from(images).map(image=>image.src);
+    return Array.from(images)
+        .filter(img => {
+            const width = img.naturalWidth;
+            const height = img.naturalHeight;
+
+            // Ensure the image is loaded before filtering
+            if (!width || !height) return false;
+
+            // Check width and height conditions
+            if (width < minWidth || height < minHeight) return false;
+
+            // Fetch the image size (requires a HEAD request)
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open("HEAD", img.src, false); // Synchronous request
+                xhr.send(null);
+
+                const contentLength = xhr.getResponseHeader("Content-Length");
+                const sizeKb = contentLength ? parseInt(contentLength, 10) / 1024 : 0;
+
+                if (sizeKb < minSizeKb) return false;
+            } catch (error) {
+                console.warn("Could not determine size for:", img.src);
+            }
+
+            return true;
+        })
+        .map(img => img.src);
 }
 
 /**
@@ -57,10 +99,10 @@ function onResult(frames) {
     }
     // Combine arrays of image URLs from
     // each frame to a single array
-    const imageUrls = frames.map(frame=>frame.result)
-                            .reduce((r1,r2)=>r1.concat(r2));
+    const imageUrls = frames.map(frame => frame.result)
+                            .reduce((r1, r2) => r1.concat(r2));
     // Open a page with a list of images and send urls to it
-    openImagesPage(imageUrls)
+    openImagesPage(imageUrls);
 }
 
 /**
@@ -72,13 +114,65 @@ function onResult(frames) {
  */
 function openImagesPage(urls) {
     chrome.tabs.create(
-        {"url": "page.html",active:false},(tab) => {
+        { "url": "page.html", active: false }, (tab) => {
             // * Send `urls` array to this page
-            setTimeout(()=>{
-                chrome.tabs.sendMessage(tab.id,urls,(response) => {
-                    chrome.tabs.update(tab.id,{active: true});
-                });
-            },500);
+            setTimeout(() => {
+                chrome.tabs.sendMessage(tab.id, { urls, enableImageDetails }, (response) => {
+                    chrome.tabs.update(tab.id, { active: true });
+                });                
+            }, 500);
         }
     );
 }
+
+// Handling of the advanced settings
+document.addEventListener("DOMContentLoaded", function () {
+    // Array of setting IDs for easy iteration
+    const settingIds = ["minImageSizeKb", "minImageWidthPx", "minImageHeightPx"];
+
+    // Load stored values and apply to UI
+    settingIds.forEach(id => {
+        console.log(localStorage);
+
+        // Retrieve stored values from localStorage
+        const value = localStorage.getItem(id);
+        const checkboxState = localStorage.getItem(`enable_${id}`) === "true";
+
+        // Apply checkbox state and input value
+        if (checkboxState) {
+            document.getElementById(`enable_${id}`).checked = true;
+            document.getElementById(id).disabled = false; // Enable the corresponding input
+        }
+
+        if (value) {
+            document.getElementById(id).value = value;
+        }
+
+        // Attach event listeners to checkboxes for enabling/disabling inputs
+        document.getElementById(`enable_${id}`).addEventListener("change", function () {
+            const input = document.getElementById(id);
+            input.disabled = !this.checked;
+            console.log(`Toggled input ${id}`);
+
+            // Store checkbox state in localStorage
+            localStorage.setItem(`enable_${id}`, this.checked);
+        });
+
+        // Save the input values in localStorage when changed
+        document.getElementById(id).addEventListener("input", function () {
+            localStorage.setItem(id, this.value);
+            console.log(`Saved ${id} value:`, this.value);
+            console.log(localStorage);
+        });
+    });
+
+    const justTickSettingIds = ["enable_imageDetails"];
+    justTickSettingIds.forEach(id => {
+        document.getElementById(`enable_${id}`).addEventListener("change", function () {
+            console.log(`Toggled input ${id}`);
+            // Store checkbox state in localStorage
+            localStorage.setItem(`enable_${id}`, this.checked);
+        });
+    });
+
+});
