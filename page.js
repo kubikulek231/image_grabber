@@ -141,109 +141,124 @@ function populateContainer() {
  * @param {Object} imgData - Image data object
  */
 function addImageNode(container, imgData) {
-    const div = document.createElement("div");
-    div.className = "imageDiv";
-
-    const imgContainer = document.createElement("div");
-    imgContainer.classList = ["image-container"];
+    const div = createImageDiv();
+    const imgContainer = createImageContainer(imgData);
     div.appendChild(imgContainer);
-
-    const img = document.createElement("img");
-    img.src = imgData.url;
-
-    imgContainer.appendChild(img);
-
-    // Create details div
+    
     if (enableImageDetails) {
-        const details = document.createElement("div");
-        details.className = "imageDetails";
-        details.innerHTML = `
-            <div class="image-filename"><strong>File:</strong> ${imgData.fileName || "Unknown"}</div>
-            <div class="image-size"><strong>Size:</strong> ${imgData.sizeKb ? imgData.sizeKb.toFixed(2) + " kB" : "Unknown"}</div>
-            <div class="image-dimensions"><strong>Dimensions:</strong> ${imgData.width} x ${imgData.height} px</div>
-        `;
+        const details = createImageDetails(imgData);
         div.appendChild(details);
     }
+    
+    const checkbox = createCheckbox(imgData.url);
+    div.appendChild(checkbox);
+    
+    const imageButtonBar = createImageButtonBar(imgData);
+    div.appendChild(imageButtonBar);
+    
+    container.appendChild(div);
+}
 
-    // Checkbox for selection
+function createImageDiv() {
+    const div = document.createElement("div");
+    div.className = "image-card";
+    return div;
+}
+
+function createImageContainer(imgData) {
+    const imgContainer = document.createElement("div");
+    imgContainer.classList.add("image-container");
+    
+    const img = document.createElement("img");
+    img.src = imgData.url;
+    imgContainer.appendChild(img);
+    
+    return imgContainer;
+}
+
+function createImageDetails(imgData) {
+    const details = document.createElement("div");
+    details.className = "imageDetails";
+    details.innerHTML = `
+        <div class="image-filename"><strong>File:</strong> ${imgData.fileName || "Unknown"}</div>
+        <div class="image-size"><strong>Size:</strong> ${imgData.sizeKb ? imgData.sizeKb.toFixed(2) + " kB" : "Unknown"}</div>
+        <div class="image-dimensions"><strong>Dimensions:</strong> ${imgData.width} x ${imgData.height} px</div>
+    `;
+    return details;
+}
+
+function createCheckbox(url) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.setAttribute("url", imgData.url);
-    div.appendChild(checkbox);
+    checkbox.setAttribute("url", url);
+    return checkbox;
+}
 
+function createImageButtonBar(imgData) {
     const imageButtonBar = document.createElement("div");
-    imageButtonBar.classList = ["image-button-bar"];
+    imageButtonBar.classList.add("image-button-bar");
+    
+    imageButtonBar.appendChild(createDownloadButton(imgData));
+    imageButtonBar.appendChild(createOpenInNewTabButton(imgData.url));
+    imageButtonBar.appendChild(createViewButton(imgData));
+    
+    return imageButtonBar;
+}
 
-    // Add a download button for each image
+function createDownloadButton(imgData) {
     const downloadButton = document.createElement("button");
-    downloadButton.classList = ["imageButton singleDownloadButton"];
-    // downloadButton.innerText = "Download";
-    downloadButton.addEventListener("click", () => {
-        downloadImage(imgData.url, imgData.fileName);
-    });
-    imageButtonBar.appendChild(downloadButton);
+    downloadButton.classList.add("imageButton", "singleDownloadButton");
+    downloadButton.addEventListener("click", () => downloadImage(imgData.url, imgData.fileName));
+    return downloadButton;
+}
 
-    // Add an Open in New Tab button
+function createOpenInNewTabButton(url) {
     const openInNewTabButton = document.createElement("button");
-    openInNewTabButton.classList = ["imageButton openInNewTabButton"];
-    // openInNewTabButton.innerText = "Open";
-    openInNewTabButton.addEventListener("click", () => {
-        window.open(imgData.url, "_blank"); // Opens the image in a new tab
-    });
-    imageButtonBar.appendChild(openInNewTabButton);
+    openInNewTabButton.classList.add("imageButton", "openInNewTabButton");
+    openInNewTabButton.addEventListener("click", () => window.open(url, "_blank"));
+    return openInNewTabButton;
+}
 
-
-    // View button to show the image in an overlay
+function createViewButton(imgData) {
     const viewButton = document.createElement("button");
-    viewButton.classList = ["imageButton viewImageButton"];
-    // viewButton.innerText = "View";
+    viewButton.classList.add("imageButton", "viewImageButton");
     
-    // Create an overlay element to show the image
-    const overlay = document.createElement("div");
-    overlay.classList.add("image-overlay");
+    viewButton.addEventListener("click", () => {
+        const overlay = createImageOverlay(imgData.url);
+        document.body.appendChild(overlay);
+    });
     
-    // Add an image element inside the overlay
-    const overlayImage = document.createElement("img");
-    overlayImage.src = imgData.url;
-    overlay.appendChild(overlayImage);
+    return viewButton;
+}
 
-    // Create the close (X) button
+function createImageOverlay(url) {
+    const overlay = document.createElement("div");
+    overlay.id = "imageViewOverlay";
+    
+    const overlayImage = document.createElement("img");
+    overlayImage.src = url;
+    overlay.appendChild(overlayImage);
+    
     const closeButton = document.createElement("button");
     closeButton.classList.add("close-overlay-button");
     closeButton.innerText = "CLOSE";
+    closeButton.addEventListener("click", () => removeImageOverlay());
     
-    // Add close button event listener to hide the overlay
-    closeButton.addEventListener("click", () => {
-        overlay.style.display = "none";
-    });
-
-    // Append the close button to the overlay (top right corner)
     overlay.appendChild(closeButton);
-    
-    overlay.style.display = "none"; // Initially hidden
-    document.body.appendChild(overlay); // Append overlay to body
-
-    // Toggle the overlay visibility when the view button is clicked
-    viewButton.addEventListener("click", () => {
-        if (overlay.style.display === "none") {
-            overlay.style.display = "block"; // Show the overlay
-        } else {
-            overlay.style.display = "none"; // Hide the overlay
-        }
-    });
-
-    // Close the overlay if the user clicks outside the image
     overlay.addEventListener("click", (event) => {
-        // Only close the overlay if the click is outside the image itself
         if (event.target === overlay) {
-            overlay.style.display = "none";
+            removeImageOverlay();
         }
     });
+    
+    return overlay;
+}
 
-    imageButtonBar.appendChild(viewButton);
-    div.appendChild(imageButtonBar);
-    // Append the div to the container
-    container.appendChild(div);
+function removeImageOverlay() {
+    const overlayElement = document.querySelector("#imageViewOverlay");
+    if (overlayElement !== null) {
+        overlayElement.remove();
+    }
 }
 
 /**

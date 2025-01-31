@@ -158,7 +158,7 @@ body {
     width: 100%;
 }
 
-.imageDiv {
+.image-card {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -173,12 +173,12 @@ body {
     border-radius: 2px;
 }
 
-.imageDiv:hover {
+.image-card:hover {
     background: linear-gradient(45deg, #ffffff, #adadad);  /* Slightly different gradient angle */
     box-shadow: 5px 5px 5px #00222299;  /* More intense shadow on hover */
 }
 
-.imageDiv input {
+.image-card input {
     position: absolute;
     top:10px;
     left:10px;
@@ -269,20 +269,20 @@ body {
 }
 
 /* Overlay style */
-.image-overlay {
+#imageViewOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
-    display: none;
+    display: block;
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Ensure it's on top */
 }
 
-.image-overlay img {
+#imageViewOverlay img {
     display: block;
     max-width: 90%;
     max-height: 90%;
