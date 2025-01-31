@@ -173,6 +173,13 @@ function createImageContainer(imgData) {
     img.src = imgData.url;
     imgContainer.appendChild(img);
     
+    imgContainer.addEventListener("click", () => {
+        const checkbox = imgContainer.parentElement.querySelector("input[type='checkbox']");
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+        }
+    });
+    
     return imgContainer;
 }
 
