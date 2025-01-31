@@ -59,8 +59,14 @@ function grabImages(minSizeKb, minWidth, minHeight) {
             // Ensure the image is loaded before filtering
             if (!width || !height) return false;
 
-            // Check width and height conditions
-            if (width < minWidth || height < minHeight) return false;
+            // Validate width and height, ensure they're valid numbers, and greater than or equal to minWidth/minHeight
+            const isWidthValid = !isNaN(width) && width >= (minWidth || 0);
+            const isHeightValid = !isNaN(height) && height >= (minHeight || 0);
+
+            // Only filter images that do not meet the minWidth or minHeight criteria
+            if ((minWidth && !isWidthValid) || (minHeight && !isHeightValid)) {
+                return false;
+            }
 
             // Fetch the image size (requires a HEAD request)
             try {
@@ -69,9 +75,13 @@ function grabImages(minSizeKb, minWidth, minHeight) {
                 xhr.send(null);
 
                 const contentLength = xhr.getResponseHeader("Content-Length");
-                const sizeKb = contentLength ? parseInt(contentLength, 10) / 1024 : 0;
+                const sizeKb = contentLength ? parseInt(contentLength, 10) / 1024 : NaN;
 
-                if (sizeKb < minSizeKb) return false;
+                // Skip size check if the size is invalid (non-numeric or NaN)
+                if (isNaN(sizeKb)) {return true;}
+                if (sizeKb < minSizeKb) {
+                    return false;
+                }
             } catch (error) {
                 console.warn("Could not determine size for:", img.src);
             }
@@ -80,6 +90,7 @@ function grabImages(minSizeKb, minWidth, minHeight) {
         })
         .map(img => img.src);
 }
+
 
 /**
  * Executed after all grabImages() calls finished on
@@ -166,13 +177,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    const justTickSettingIds = ["enable_imageDetails"];
+    const justTickSettingIds = ["imageDetails"];
     justTickSettingIds.forEach(id => {
         document.getElementById(`enable_${id}`).addEventListener("change", function () {
             console.log(`Toggled input ${id}`);
             // Store checkbox state in localStorage
             localStorage.setItem(`enable_${id}`, this.checked);
         });
+        // Retrieve stored values from localStorage
+        const value = localStorage.getItem(id);
+        const checkboxState = localStorage.getItem(`enable_${id}`) === "true";
+
+        // Apply checkbox state and input value
+        if (checkboxState) {
+            document.getElementById(`enable_${id}`).checked = true;
+            document.getElementById(id).disabled = false; // Enable the corresponding input
+        }
+
+        if (value) {
+            document.getElementById(id).value = value;
+        }
     });
 
 });

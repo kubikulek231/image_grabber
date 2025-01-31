@@ -1,27 +1,107 @@
-body {
-    margin:0px;
-    padding:0px;
-    background-color: #ffffff;
+html {
+    font-family: 'Roboto', sans-serif;  /* Apply Roboto font */
+    width: 100%;
+    height: 100%;
 }
 
+body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: white;  /* Subtle gradient */
+    transition: background 0.3s ease;  /* Smooth transition for background changes */
+}
+
+#sortLabel {
+    color: white;
+   }
+   
+   #sortingContainer {
+       display: flex;
+       gap: 5px;
+       font-size: 1.25em;
+       height: 100%;
+       width: fit-content;
+       position: relative;
+   
+   }
+   
+   #sortingContainer > button {
+       color: white;
+       border-width: 0px;
+       border-radius: 2px;
+       padding: 7px;
+       cursor: pointer;
+       box-shadow: 2px 2px #00000066;
+       font-size: 16px;
+       text-shadow: 2px 2px 2px #00000088;
+       font-weight: bold;
+       background: linear-gradient(172deg, #9e9e9e, #b1b1b1);  /* Slightly different gradient angle */
+   }
+   
+   #sortingContainer > button:hover {
+       background: linear-gradient(172deg, #9e9e9e, #b1b1b1);  /* Slightly different gradient angle */
+       text-shadow: none;
+       color: black;
+   }
+   
+   /* Style when the button is toggled (clicked) */
+   #sortingContainer > button[toggled] {
+       background: linear-gradient(45deg, #9e9e9e, #b1b1b1);  /* Change gradient */
+       text-shadow: none;
+       color: black;
+   }
+   
+   #sortingContainer > button[toggled]:hover {
+       background: linear-gradient(172deg, #838383, #696969);  /* Slightly different gradient angle */
+       text-shadow: none;
+       color: black;
+   }
+
 .header {    
-    display:flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width:100%;
     position: fixed;
+    display:flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    width:100%;
     padding:10px;
-    background: linear-gradient( #5bc4bc, #01a9e1);
-    z-index:100;
+    gap: 20px;
+    background: linear-gradient(45deg, #001438, #002363);
     box-shadow: 0px 5px 5px #00222266;
+    z-index: 200;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50px;
+    padding: 8px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #000000;
+    --_m: 
+      conic-gradient(#0000 10%,#000),
+      linear-gradient(#000 0 0) content-box;
+    -webkit-mask: var(--_m);
+            mask: var(--_m);
+    -webkit-mask-composite: source-out;
+            mask-composite: subtract;
+    animation: l3 1s infinite linear;
+  }
+  @keyframes l3 {to{transform: rotate(1turn)}}
+
+
+.flexbox-spacer {
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 .header > span {
     font-weight: bold;
     color: black;
-    text-transform: uppercase;
     color: #ffffff;
     text-shadow: 3px 3px 3px #000000ff;
     font-size: 24px;
@@ -47,23 +127,25 @@ body {
 }
 
 .header > button {
-    color:white;
-    background:linear-gradient(#01a9e1, #5bc4bc);
-    border-width:0px;
-    border-radius:5px;
-    padding:10px;
+    color: white;
+    background-color:  #a7a7a7;
+    border-width: 0px;
+    border-radius: 2px;
+    padding: 7px;
     font-weight: bold;
-    cursor:pointer;
+    cursor: pointer;
     box-shadow: 2px 2px #00000066;
     margin-right: 20px;
-    font-size:16px;
+    font-size: 16px;
     text-shadow: 2px 2px 2px #00000088;
 }
 
 .header > button:hover {
-    background:linear-gradient( #5bc4bc,#01a9e1);
-    box-shadow: 2px 2px #00000066;
+    background: linear-gradient(172deg, #ffffff, #d3d3d3);  /* Slightly different gradient angle */
+    text-shadow: none;
+    color: black;
 }
+
 
 .container {
     display: flex;
@@ -72,55 +154,155 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding-top: 70px;
+    gap: 10px;
+    width: 100%;
 }
 
 .imageDiv {
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    position:relative;
-    width:150px;
-    height:150px;
-    padding:10px;
-    margin:10px;
-    border-radius: 5px;
-    background: linear-gradient(#01a9e1, #5bc4bc);
-    box-shadow: 5px 5px 5px #00222266;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: start; /* Align content to the left */
+    width: max-content; /* Makes width depend only on the image */
+    background: linear-gradient(30deg, #ffffff, #c5c5c5); 
+
+    /* Add transition for background and box-shadow */
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+
+    border: 1px solid gray;
+    border-radius: 2px;
 }
 
 .imageDiv:hover {
-    background: linear-gradient(#5bc4bc,#01a9e1);
-    box-shadow: 10px 10px 10px #00222266;
-}
-
-.imageDiv img {
-    max-width:100%;
-    max-height:100%;
+    background: linear-gradient(45deg, #ffffff, #adadad);  /* Slightly different gradient angle */
+    box-shadow: 5px 5px 5px #00222299;  /* More intense shadow on hover */
 }
 
 .imageDiv input {
-    position:absolute;
+    position: absolute;
     top:10px;
-    right:10px;
+    left:10px;
     width:20px;
     height:20px;
+    z-index: 100;
 }
 
-/* HTML: <div class="loader"></div> */
-.loader {
-    width: 50px;
-    padding: 8px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: #000000;
-    --_m: 
-      conic-gradient(#0000 10%,#000),
-      linear-gradient(#000 0 0) content-box;
-    -webkit-mask: var(--_m);
-            mask: var(--_m);
-    -webkit-mask-composite: source-out;
-            mask-composite: subtract;
-    animation: l3 1s infinite linear;
+.imageButton {
+    background-color: rgb(0, 132, 255);
+    max-width: 100%;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #002363;
+    color: white;
+    font-size: 1em;
+    height: 30px;
+    width: 30px;
+}
+
+.singleDownloadButton {
+    background-image: url('assets/download.svg');  /* Path to the SVG file */
+    background-size: contain;  /* Ensures the image scales to fit the button */
+    background-repeat: no-repeat;  /* Prevents repeating the background */
+    background-position: center;  /* Centers the image within the button */
+}
+
+.openInNewTabButton {
+    background-image: url('assets/new_tab.svg');  /* Path to the SVG file */
+    background-size: contain;  /* Ensures the image scales to fit the button */
+    background-repeat: no-repeat;  /* Prevents repeating the background */
+    background-position: center;  /* Centers the image within the button */
+}
+
+.viewImageButton {
+    background-image: url('assets/zoom_in.svg');  /* Path to the SVG file */
+    background-size: contain;  /* Ensures the image scales to fit the button */
+    background-repeat: no-repeat;  /* Prevents repeating the background */
+    background-position: center;  /* Centers the image within the button */
+}
+
+.imageButton:hover {
+    background-color: #003b99;
+}
+
+.close-overlay-button {
+    position: absolute;
+    background: linear-gradient(45deg, #ff4d4d, #d63333); /* Gradient background for a red button */
+    border: 1px solid #fff;
+    color: white;
+    font-size: 24px;
+    top: 10px;
+    right: 10px;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.close-overlay-button:hover {
+    background: linear-gradient(45deg, #d63333, #a61e1e); /* Darker gradient on hover */
+    transform: scale(1.1); /* Slight zoom effect on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+.image-container img {
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 500px;
+    max-height: 500px;
+    width: auto;
+    height: auto;
   }
-  @keyframes l3 {to{transform: rotate(1turn)}}
+
+/* This shit is pure magic, this makes the parent not get stretched by the text lol??? */
+.imageDetails {
+    width: 0;
+    min-width: 100%;
+    overflow-x: auto;
+    max-height: min-content;
+}
+
+.imageDetails > div {
+    padding-left: 4px;
+    padding-right: 4px;
+    width: max-content;
+}
+
+/* Overlay style */
+.image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.image-overlay img {
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto;
+    object-fit: contain; /* Make sure the image fits within the screen */
+    margin: auto;
+}
+
+.image-button-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: absolute;
+    top:1px;
+    right:1px;
+    z-index: 100;
+}
+#imagesLoading {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 32px;
+}

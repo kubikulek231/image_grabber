@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Image Grabber</title>
+        <title>AdvancedImageGrabber</title>
         <link href="/page.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <div class="header">
-            <div>
-                <div id="sortLabel">Sort by:</div>
+            <div id="sortingContainer">
+                <div id="sortLabel">Sort by image</div>
                 <button id="sortHeight">Height</button>  
                 <button id="sortWidth">Width</button>  
-                <button id="sortSize">Size</button>  
+                <button id="sortSize" toggled>Size</button>  
             </div>
+            <div class="flexbox-spacer"></div>
             <div>
                 <input type="checkbox" id="selectAll"/>&nbsp;
                 <span>Select all</span>
             </div>
-            <span>Image Grabber 2</span>
-            <button id="downloadBtn">Download</button>    
+            <button id="downloadBtn">Download selected</button>    
         </div>
         <div class="container">      
             <div id="imagesError" style="display: none">

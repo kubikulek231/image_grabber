@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Image Grabber</title>
+        <title>AdvancedImageGrabber</title>
         <link rel="stylesheet" type="text/css" href="popup.css"/>
         <script defer src="popup.js"></script>
     </head>
     <body>
-        <h1>Image Grabber</h1>
+        <div id="advancedImageGrabberTitle">
+            <div>Advanced</div>
+            <div>ImageGrabber</div>
+        </div>
         <button id="grabBtn">GRAB NOW</button>
-        <div id="advancedSettingsHeader">Advanced Settings</div>
+        <div id="advancedSettingsHeader">Settings</div>
         <div id="advancedSettingsContainer">
         
             <div class="input-group">
                 <label>
                     <input type="checkbox" id="enable_minImageSizeKb">
-                    Enable minimal image size
+                    Minimal image size
                 </label>
                 <div class="input-wrapper">
                     <input type="number" id="minImageSizeKb" name="minImageSizeKb" min="0" step="1" placeholder="Enter size" disabled>
@@ -25,7 +28,7 @@
             <div class="input-group">
                 <label>
                     <input type="checkbox" id="enable_minImageWidthPx">
-                    Enable minimal image width
+                    Minimal image width
                 </label>
                 <div class="input-wrapper">
                     <input type="number" id="minImageWidthPx" name="minImageWidthPx" min="0" step="1" placeholder="Enter width" disabled>
@@ -36,7 +39,7 @@
             <div class="input-group">
                 <label>
                     <input type="checkbox" id="enable_minImageHeightPx">
-                    Enable minimal image height
+                    Minimal image height
                 </label>
                 <div class="input-wrapper">
                     <input type="number" id="minImageHeightPx" name="minImageHeightPx" min="0" step="1" placeholder="Enter height" disabled>
@@ -51,6 +54,5 @@
                 </label>
             </div>
         </div>
-        
     </body>
 </html>
