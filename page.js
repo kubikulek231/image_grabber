@@ -365,8 +365,11 @@ document.getElementById("selectAll").addEventListener("change", (event) => {
 document.getElementById("downloadBtn").addEventListener("click", async () => {
     try {
         const urls = getSelectedUrls();
-        const archive = await createArchive(urls);
-        downloadArchive(archive);
+        urls.forEach(async (url) => {
+            downloadImage(url);
+        });
+        // const archive = await createArchive(urls);
+        // downloadArchive(archive);
     } catch (err) {
         alert(err.message);
     }
@@ -421,20 +424,6 @@ function sortByHeight() {
 
     // Repopulate the container with sorted images
     populateContainer();
-}
-
-/**
- * Function to download the ZIP-archive
- * @param {Blob} archive - The ZIP archive to download
- */
-function downloadArchive(archive) {
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(archive);
-    link.download = "images.zip";
-    document.body.appendChild(link);
-    link.click();
-    URL.revokeObjectURL(link.href);
-    document.body.removeChild(link);
 }
 
 /**
