@@ -37,6 +37,20 @@ button:active {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* Smaller shadow when clicked */
 }
 
+button[disabled] {
+    pointer-events: none;
+    background: linear-gradient(135deg, #707070, #666666); 
+    color: #bbb; /* Make text faded */
+    cursor: not-allowed; /* Show "not allowed" cursor */
+}
+
+button[disabled]:hover {
+    background: linear-gradient(135deg, #707070, #666666); 
+    box-shadow: none;
+    transform: none;
+}
+
+
 .input-wrapper:has(input:disabled) {
     opacity: 0.5;  /* Makes it visually distinct */
 }

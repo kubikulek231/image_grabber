@@ -1,14 +1,21 @@
 let enableImageDetails = false;
 const grabBtn = document.getElementById("grabBtn");
+
 grabBtn.addEventListener("click", () => {
+    // Disable button before processing
+    grabBtn.disabled = true;
+
     // Get active browser tab
-    chrome.tabs.query({ active: true }, function (tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         var tab = tabs[0];
         if (tab) {
             execScript(tab);
         } else {
             alert("There are no active tabs");
         }
+
+        // Re-enable button if necessary
+        grabBtn.disabled = false;
     });
 });
 
